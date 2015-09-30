@@ -1,8 +1,13 @@
 /**
  * Break apart textfields
- * @version 1.0
+ * @version 1.01
  * @author: Charles D Clements  - http://www.charlesclements.net
  */ 
+ 
+/*
+Bug fixes:
+1.01 - Fixed breakApart() call error when an empty Textfield was selected for breaking apart. 
+*/
  
 var doc = fl.getDocumentDOM();
 var trace = fl.outputPanel.trace;
@@ -56,8 +61,6 @@ function RunThruLibrary()
         if( clip.itemType === "movie clip" || clip.itemType === "graphic" || clip.itemType === "button" )
         {
             
-            //trace( "k : " + k );
-            
             // Send MovieClip to searchThruMovieClip function.
             searchThruMovieClip();
             
@@ -73,8 +76,6 @@ function RunThruLibrary()
 
 function searchThruRootTimeline()
 {
-
-    //trace( "searchThruRootTimeline" );
 
     // Get Scene 0 which is the root timeline.
     doc.editScene(0);
@@ -97,8 +98,6 @@ function searchThruRootTimeline()
 function searchThruMovieClip()
 {
 
-    //trace( "searchMovieClip : " + clip.name );
-
     library.selectItem( clip.name );
     library.editItem();
     
@@ -118,8 +117,6 @@ function searchThruMovieClip()
 
 function checkFrame(frame)
 {
-
-    //trace( "checkFrame : " + frame );
 
     // Set frame as first frame.
     timeline.currentFrame = frame; 
@@ -143,8 +140,6 @@ function checkFrame(frame)
         if( item.elementType === "text" )
         {
         
-            //alert("BREAKING APART");
-            
             doc.selection = [ item ];
             
             
@@ -154,26 +149,25 @@ function checkFrame(frame)
                 // If there is more than one character in the textfield, breakApart needs to be called twice.
                 doc.breakApart();
                 doc.breakApart();
+                doc.group();
+                //trace( "======== TEXT BROKEN APART =========" );
             
             }
-            else
+            else if( doc.getTextString().length == 1 )
             {
             
                 // If its a single character in a textfield, you only need to breakApart once.
                 doc.breakApart();
+                doc.group();
+                //trace( "======== TEXT BROKEN APART =========" );
                 
             }
             
-            doc.group();
-            
-            //trace( "======== TEXT BROKEN APART =========" );
             doc.selection = tempSelection;
             
         }
     
     }
-    
-    //trace( " " );
 
 }
 
